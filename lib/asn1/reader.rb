@@ -7,20 +7,63 @@ module Asn1
     def initialize(bytes)
       @bytes = bytes
       @cursor = 0
+      @header_length = 0
+    end
+
+    def eoc?
+      @cursor == total_length
+    end
+
+    def total_length
+      @header_length + @length
     end
 
     def read_sequence
       read_next_object
     end
 
+    def read_object_identifier
+      object_identifier = read_next_object
+
+      sub_identifiers = []
+      sub_identifier = 0
+
+      object_identifier.enumerate_content_bytes.each_with_index do |byte, index|
+        if index == 0
+          sub_identifiers << (byte / 40)
+          sub_identifiers << (byte % 40)
+          next
+        end
+
+        sub_identifier = (sub_identifier << 7) | (byte & 0x7F)
+
+        is_end_of_sub_identifier = byte & 0x80
+        if is_end_of_sub_identifier == 0
+          sub_identifiers << sub_identifier
+          sub_identifier = 0
+        end
+      end
+
+      sub_identifiers.join('.')
+    end
+
     def read_header
       @tag = read_byte
       @length = read_length
+      @header_length = @cursor
+    end
+
+    def enumerate_content_bytes
+      Enumerator.new do |y|
+        until eoc?
+          y << read_byte
+        end
+      end
     end
 
     private
 
-    attr_accessor :cursor
+    attr_accessor :cursor, :header_length
 
     def read_byte
       byte = @bytes.getbyte(@cursor)
@@ -31,8 +74,13 @@ module Asn1
     def read_next_object
       reader = self.class.new(@bytes[@cursor..])
       reader.read_header
+      skip_parsed_bytes(reader)
 
       reader
+    end
+
+    def skip_parsed_bytes(parsed_reader)
+      @cursor += parsed_reader.total_length
     end
 
     def read_length
