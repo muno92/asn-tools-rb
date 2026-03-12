@@ -3,6 +3,7 @@
 module Asn1
   class Reader
     attr_reader :tag, :length
+    private attr_accessor :bytes, :cursor, :header_length
 
     def initialize(bytes)
       @bytes = bytes
@@ -62,8 +63,6 @@ module Asn1
     end
 
     private
-
-    attr_accessor :cursor, :header_length
 
     def read_byte
       byte = @bytes.getbyte(@cursor)

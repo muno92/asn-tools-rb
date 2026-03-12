@@ -1,10 +1,8 @@
 module Asn1
   class Reader
-    @bytes: String
-    @cursor: Integer
-    @header_length: Integer
-    @tag: Integer
-
+    attr_accessor bytes: String
+    attr_accessor cursor: Integer
+    attr_accessor header_length: Integer
     attr_reader tag: Integer
     attr_reader length: Integer
 
