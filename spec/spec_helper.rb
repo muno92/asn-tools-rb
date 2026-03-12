@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "asn1/tools/rb"
+require "asn1"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
@@ -11,5 +11,9 @@ RSpec.configure do |config|
 
   config.expect_with :rspec do |c|
     c.syntax = :expect
+  end
+
+  def fixture_path(filename)
+    File.expand_path("fixture/#{filename}", __dir__)
   end
 end

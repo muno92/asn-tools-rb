@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-require_relative "lib/asn1/tools/rb/version"
+require_relative "lib/asn1/version"
 
 Gem::Specification.new do |spec|
   spec.name = "asn1-tools-rb"
-  spec.version = Asn1::Tools::Rb::VERSION
+  spec.version = Asn1::VERSION
   spec.authors = ["muno92"]
   spec.email = ["34187067+muno92@users.noreply.github.com"]
 
