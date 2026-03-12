@@ -1,7 +1,18 @@
 module Asn1
   class Reader
     @bytes: String
+    @tag: Integer
+
+    attr_reader tag: Integer
+    attr_reader length: Integer
+
+    def read_next_object: -> Reader
 
     def read_sequence: -> Reader
+
+    private
+
+    def length_is_short_form: (first_length_byte: Integer) -> bool
+    def read_length: -> Integer
   end
 end
